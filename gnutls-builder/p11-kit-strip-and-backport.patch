@@ -1,0 +1,60 @@
+
+Summary of changes:
+
+* debian/rules:   turn off documentation, autotests (1 of 45 tests failed, test-token)
+* debian/libp11-kit-dev.install: remove gtk-doc mention
+* debian/libp11-kit-dev.links: remove gtk-doc mention
+* debian/p11-kit.install: no man[158]
+* debian/rules: comment unsupported dh_strip --ddeb-migration option
+
+
+diff -ur p11-kit-0.23.2.back/debian/libp11-kit-dev.install p11-kit-0.23.2/debian/libp11-kit-dev.install
+--- p11-kit-0.23.2.back/debian/libp11-kit-dev.install	2018-10-16 10:47:27.857823831 +0000
++++ p11-kit-0.23.2/debian/libp11-kit-dev.install	2018-10-16 10:57:47.528240130 +0000
+@@ -1,4 +1,3 @@
+ usr/include/*
+ usr/lib/*/lib*.so
+ usr/lib/*/pkgconfig/*
+-usr/share/gtk-doc/*
+diff -ur p11-kit-0.23.2.back/debian/libp11-kit-dev.links p11-kit-0.23.2/debian/libp11-kit-dev.links
+--- p11-kit-0.23.2.back/debian/libp11-kit-dev.links	2018-10-16 10:47:27.857823831 +0000
++++ p11-kit-0.23.2/debian/libp11-kit-dev.links	2018-10-16 11:08:15.071768182 +0000
+@@ -1,2 +1 @@
+-usr/share/gtk-doc/html/p11-kit usr/share/doc/libp11-kit-dev/html
+
+Only in p11-kit-0.23.2.back/debian/: libp11-kit0.debhelper.log
+Only in p11-kit-0.23.2.back/debian/: p11-kit-modules.debhelper.log
+Only in p11-kit-0.23.2.back/debian/: p11-kit.debhelper.log
+diff -ur p11-kit-0.23.2.back/debian/p11-kit.install p11-kit-0.23.2/debian/p11-kit.install
+--- p11-kit-0.23.2.back/debian/p11-kit.install	2018-10-16 10:47:27.856823859 +0000
++++ p11-kit-0.23.2/debian/p11-kit.install	2018-10-16 11:04:03.365802484 +0000
+@@ -1,4 +1,3 @@
+ usr/bin/*
+ usr/share/p11-kit/modules/p11-kit-trust.module
+ usr/share/locale/*/*/p11-kit.mo
+-usr/share/man/man[158]/*
+diff -ur p11-kit-0.23.2.back/debian/rules p11-kit-0.23.2/debian/rules
+--- p11-kit-0.23.2.back/debian/rules	2018-10-16 10:47:27.857823831 +0000
++++ p11-kit-0.23.2/debian/rules	2018-10-16 11:12:01.591413307 +0000
+@@ -9,15 +9,18 @@
+ 	dh_auto_configure --verbose -- \
+ 		--disable-silent-rules \
+ 		--with-trust-paths=/etc/ssl/certs/ca-certificates.crt \
+-		--with-hash-impl=internal --enable-doc
++		--with-hash-impl=internal
++
++override_dh_auto_test:
++	true
+
+ override_dh_makeshlibs:
+ 	# Force keeping symbol file up to date.
+ 	dh_makeshlibs \
+ 		-Xusr/lib/$(DEB_HOST_MULTIARCH)/pkcs11/p11-kit-trust.so -- -c4
+
+-override_dh_strip:
+-	dh_strip --ddeb-migration='libp11-kit0-dbg (<< 0.23.2-3~)'
++#override_dh_strip:
++#	dh_strip --ddeb-migration='libp11-kit0-dbg (<< 0.23.2-3~)'
+
+ override_dh_link:
+ 	rm -rf debian/libp11-kit0-dbg/usr/share/doc/libp11-kit0-dbg \

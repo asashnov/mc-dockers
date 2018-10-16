@@ -1,0 +1,36 @@
+The patch from
+https://github.com/darealshinji/vlc-AppImage/issues/1#issuecomment-321041496
+
+'darealshinji' created a PPA in 2017, but it's not there now.
+
+
+--- a/lib/system.c
++++ b/lib/system.c
+@@ -389,16 +389,16 @@
+ 		r += ret;
+ #endif
+
+-#ifdef DEFAULT_TRUST_STORE_FILE
+-	ret =
+-	    gnutls_x509_trust_list_add_trust_file(list,
+-						  DEFAULT_TRUST_STORE_FILE,
+-						  crl_file,
+-						  GNUTLS_X509_FMT_PEM,
+-						  tl_flags, tl_vflags);
+-	if (ret > 0)
+-		r += ret;
+-#endif
++	ret = gnutls_x509_trust_list_add_trust_file(list, "/etc/ssl/ca-bundle.pem", crl_file, GNUTLS_X509_FMT_PEM, tl_flags, tl_vflags);
++	if (ret > 0) r += ret;
++	ret = gnutls_x509_trust_list_add_trust_file(list, "/etc/ssl/certs/ca-certificates.crt", crl_file, GNUTLS_X509_FMT_PEM, tl_flags, tl_vflags);
++	if (ret > 0) r += ret;
++	ret = gnutls_x509_trust_list_add_trust_file(list, "/etc/pki/tls/cert.pem", crl_file, GNUTLS_X509_FMT_PEM, tl_flags, tl_vflags);
++	if (ret > 0) r += ret;
++	ret = gnutls_x509_trust_list_add_trust_file(list, "/usr/local/share/certs/ca-root-nss.crt", crl_file, GNUTLS_X509_FMT_PEM, tl_flags, tl_vflags);
++	if (ret > 0) r += ret;
++	ret = gnutls_x509_trust_list_add_trust_file(list, "/etc/ssl/cert.pem", crl_file, GNUTLS_X509_FMT_PEM, tl_flags, tl_vflags);
++	if (ret > 0) r += ret;
+
+ #ifdef DEFAULT_BLACKLIST_FILE
+ 	ret = gnutls_x509_trust_list_remove_trust_file(list, DEFAULT_BLACKLIST_FILE, GNUTLS_X509_FMT_PEM);
+
