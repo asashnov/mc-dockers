@@ -36,6 +36,25 @@ cd $BASE_PATH
 # Fix for "ERROR: Could not find dependency: libicuuc.so.56"
 export LD_LIBRARY_PATH="/opt/Qt/5.9.6/gcc_64/lib/:${LD_LIBRARY_PATH:-}"
 
+# provide path for linuxdeployQt for search our patched GNU TLS
+export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/opt/gnutls-multiroot-ca/lib/"
+
+# copy OpenSSL compatibility layer of our patched GNU TLS
+# the rest of .so will be found by linuxDeployQt
+mkdir -p "$APPDIR/usr/lib"
+cp "/opt/gnutls-multiroot-ca/lib/libgnutls-openssl.so.27" "$APPDIR/usr/lib/"
+
+# Create a symlink so QSslSocket can find GNU TLS openssl compatibility layer
+# so QSslSocket dynamic OpenSSL loader can find it:
+ln -s libgnutls-openssl.so.27 "$APPDIR/usr/lib/libssl.so"
+ln -s libgnutls-openssl.so.27 "$APPDIR/usr/lib/libssl.so.1.0.0"
+ln -s libgnutls-openssl.so.27 "$APPDIR/usr/lib/libssl.so.1.1"
+ln -s libgnutls-openssl.so.27 "$APPDIR/usr/lib/libssl.so.1.1.0"
+ln -s libgnutls-openssl.so.27 "$APPDIR/usr/lib/libssl.so.1.9.9"
+
+# Copy our patched version of GNU TLS:
+# cp /opt/gnutls-multiroot-ca/lib/* "$APPDIR/usr/lib/"
+
 # Use appimage plugin to create .AppImage also: https://github.com/linuxdeploy/linuxdeploy-plugin-appimage
 ~/linuxdeploy-x86_64.AppDir/AppRun --app-name ${APP} --verbosity=0 --appdir "$APPDIR"
 ~/linuxdeploy-plugin-qt-x86_64.AppDir/AppRun --appdir "$APPDIR"

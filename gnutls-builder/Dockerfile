@@ -12,7 +12,6 @@ RUN apt update && apt full-upgrade -y && apt install -y --no-install-recommends 
     fakeroot \
     devscripts
 
-
 # RUN apt-get build-dep libgnutls-openssl27
 #
 # That will not work. Repository version of libgnutls28 requires too new
@@ -45,11 +44,7 @@ RUN apt install -y --no-install-recommends \
     zlib1g-dev
 
 # Getting libgnutls-3.4 sources from Ubuntu 16.04 repository:
-RUN echo -e "\n \
-    deb http://archive.ubuntu.com/ubuntu/ xenial-updates main \n
-    deb-src http://archive.ubuntu.com/ubuntu/ xenial-updates main \n
-" >> /etc/apt/sources.list
-
+RUN /bin/echo -e "\ndeb http://archive.ubuntu.com/ubuntu/ xenial-updates main\ndeb-src http://archive.ubuntu.com/ubuntu/ xenial-updates main\n" >> /etc/apt/sources.list
 
 RUN apt-get update && apt-get source libp11-kit-dev nettle-dev libgnutls-openssl27
 
@@ -79,6 +74,6 @@ RUN cd gnutls28-3.4.10 \
     && dpkg-buildpackage -b -d
 
 # remove conflicting packages
-RUN apt-get remove libhogweed2 libgnutls-openssl27 iputils-ping ubuntu-minimal
+RUN apt-get remove -y libhogweed2 libgnutls-openssl27 iputils-ping ubuntu-minimal libnettle4
 
 RUN dpkg -i libgnutls-openssl27_*.deb libgnutlsxx28_*.deb gnutls-bin_*.deb libgnutls30_*.deb
